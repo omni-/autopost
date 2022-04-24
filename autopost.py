@@ -55,15 +55,21 @@ reddit = praw.Reddit(
 )
 
 sub = reddit.subreddit(subname)
-
 posted = False
+
+print('Getting info for sub ' + subname + '...')
+if sub is None or sub.display_name == '':
+    print("subreddit " + subname + " not found.")
+    sys.exit(2)
+
+print('subreddit: ' + sub.display_name)
+print('description: ' + sub.description.split("\n")[0])
+
 
 while not posted:
     now = time.localtime()
     current_time = time.strftime("%H:%M", now)
-    print('Getting info for sub ' + subname + '...')
-    print('subreddit: ' + sub.display_name)
-    print('description: ' + sub.description.split("\n")[0])
+    
     if current_time is post_time:
         sub.submit(title, body)
         posted = True
