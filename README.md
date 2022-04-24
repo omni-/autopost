@@ -11,15 +11,15 @@ python3
 ARGUMENTS:
 
    [REQUIRED] --subreddit : subreddit to post to
-   [REQUIRED] --title : post title
+   [REQUIRED] --title     : post title
    [REQUIRED]   one of the folowing
-              --post : selftext post body
-              --video : local video path to post
-              --image : local image path to post
-   [OPTIONAL] --postTime : local time to post (default 5:30am)
-   [OPTIONAL] --flair : post flair - required sometimes by subreddit
-   [OPTIONAL] --spoiler : provide if spoiler
-   [OPTIONAL] --videogif : turn the video into a gif
+              --post      : selftext post body
+              --video     : local video path to post
+              --image     : local image path to post
+   [OPTIONAL] --postTime  : local time to post (default 5:30am)
+   [OPTIONAL] --flair     : post flair - required sometimes by subreddit
+   [OPTIONAL] --spoiler   : provide if spoiler
+   [OPTIONAL] --videogif  : turn the video into a gif
 ```
 example: `python autopost.py -s eldenring -t "Godskin Duo takes 16954 damage in one hit and dies instantly" -v "godskin insta.mp4" -g -l -f Spoilers`
 
