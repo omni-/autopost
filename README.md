@@ -21,4 +21,6 @@ ARGUMENTS:
    [OPTIONAL] --spoiler : provide if spoiler
    [OPTIONAL] --videogif : turn the video into a gif
 ```
-example: `python autopost.py -s omnitest -t test -p post -l -x 03:40`
+example: `python autopost.py -s eldenring -t "Godskin Duo takes 16954 damage in one hit and dies instantly" -v "godskin insta.mp4" -g -l -f Spoilers`
+
+![image](https://user-images.githubusercontent.com/4252190/164974868-3811e873-11d0-4209-a835-053fa574d3bd.png)
