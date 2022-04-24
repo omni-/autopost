@@ -33,7 +33,7 @@ except getopt.GetoptError:
 for opt, arg in opts:
     if opt in ('-h', '--help'):
         usage()
-        sys.exit(2)
+        sys.exit(0)
     elif opt in ('-t', '--title'):
         title = arg
     elif opt in ('-p', '--post'):
@@ -53,8 +53,8 @@ for opt, arg in opts:
     elif opt in ('-i', '--image'):
         image = arg
     else:
-        raise "Unrecognized option."
         usage()
+        raise "Unrecognized option."
 
 if len([x for x in [body, image, video] if x != '']) > 1:
     raise 'Must only provide one of -p, -v, or -i'
@@ -87,6 +87,9 @@ reddit = praw.Reddit(
 )
 reddit.validate_on_submit = True
 sub = reddit.subreddit(subname)
+
+clear = lambda: os.system('cls' if platform.system() == 'Windows' else 'clear')
+clear()
 
 print(colored(pyfiglet.figlet_format("AUTOPOST", font = "slant"), 'blue'))
 
