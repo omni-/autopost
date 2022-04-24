@@ -11,7 +11,7 @@ if platform.system() == 'Windows':
     os.system('color')
   
 def usage():
-    print("Usage: python autopost.py -s[--subreddit] <subreddit> -t[--title] <title> -p[--post] <post body> -x[--postTime] <time to post> -f[--flair] <flair> -l[--spoiler] <spoiler?> -v[--video] <video path> -g[--videogif] <gif-ify video?> -i[--image] <image path>")
+    print(colored("Usage: python autopost.py -s[--subreddit] <subreddit> -t[--title] <title> -p[--post] <post body> -x[--postTime] <time to post> -f[--flair] <flair> -l[--spoiler] <spoiler?> -v[--video] <video path> -g[--videogif] <gif-ify video?> -i[--image] <image path>", 'red'))
 
 title = ''
 body = ''
@@ -33,6 +33,7 @@ except getopt.GetoptError:
 for opt, arg in opts:
     if opt in ('-h', '--help'):
         usage()
+        sys.exit(2)
     elif opt in ('-t', '--title'):
         title = arg
     elif opt in ('-p', '--post'):
@@ -52,8 +53,8 @@ for opt, arg in opts:
     elif opt in ('-i', '--image'):
         image = arg
     else:
-        usage()
         raise "Unrecognized option."
+        usage()
 
 if len([x for x in [body, image, video] if x != '']) > 1:
     raise 'Must only provide one of -p, -v, or -i'
