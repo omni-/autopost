@@ -4,10 +4,8 @@ import sys
 import getopt
 import pyfiglet
   
-def usage(throw=True):
+def usage():
     print("Usage: python autopost.py -s[--subreddit] <subreddit> -t[--title] <title> -p[--post] <post body> -x[--postTime] <time to post> -f[--flair] <flair> -l[--spoiler] <spoiler?> -v[--video] <video path> -g[--videogif] <gif-ify video?> -i[--image] <image path>")
-    if throw:
-        raise
 
 title = ''
 body = ''
@@ -22,11 +20,13 @@ image = ''
 try:
     opts, args = getopt.getopt(sys.argv[1:], 's:t:p:x:f:l:v:g:i:h', ['subreddit=', 'title=', 'post=', 'postTime=', 'flair=', 'spoiler=', 'video=', 'videogif=', 'image=', 'help'])
 except getopt.GetoptError:
+    print('Getopts error')
     usage()
+    raise
 
 for opt, arg in opts:
     if opt in ('-h', '--help'):
-        usage(False)
+        usage()
     elif opt in ('-t', '--title'):
         title = arg
     elif opt in ('-p', '--post'):
@@ -47,10 +47,10 @@ for opt, arg in opts:
         image = arg
     else:
         usage()
+        raise "Unrecognized option."
 
 if len([x for x in [body, image, video] if x != '']) > 1:
-    print('Must only provide one of -p, -v, or -i')
-    sys.exit(2)
+    raise 'Must only provide one of -p, -v, or -i'
 
 post_type = ''
 if body != '':
@@ -60,17 +60,16 @@ elif video != '':
 else:
     post_type = 'image'
 
-if title == '' or body == '' or subname == '':
-    print('Subreddit, title and body required.')
+if title == '' or subname == '':
     usage()
+    raise 'Subreddit and title required'
 
 f = open('./creds.txt')
 
 # format is <user>,<pwd>,<id>,<secret>,<user_agent> 
 creds = f.read().split(",")
 if len(creds) < 5:
-    print("Missing credential file 'creds.txt'")
-    sys.exit(2)
+    raise "Missing credential file 'creds.txt'"
 
 reddit = praw.Reddit(
     client_id=creds[2],
@@ -90,12 +89,10 @@ print('local time: ' + current_time)
 print('Getting info for sub...')
 
 if sub is None or sub.display_name == '':
-    print("subreddit " + subname + " not found.")
-    sys.exit(2)
+    raise ("subreddit " + subname + " not found.")
 
 if sub.post_requirements()['is_flair_required'] and flair == '':
-    print('flair required for this subreddit.')
-    sys.exit(2)
+    raise 'flair required for this subreddit.'
 
 print('subreddit: ' + sub.display_name)
 print('sub description sample: ' + sub.description.split("\n")[0])
