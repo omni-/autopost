@@ -3,6 +3,12 @@ import time
 import sys
 import getopt
 import pyfiglet
+import os
+import platform
+from termcolor import colored
+
+if platform.system() == 'Windows':
+    os.system('color')
   
 def usage():
     print("Usage: python autopost.py -s[--subreddit] <subreddit> -t[--title] <title> -p[--post] <post body> -x[--postTime] <time to post> -f[--flair] <flair> -l[--spoiler] <spoiler?> -v[--video] <video path> -g[--videogif] <gif-ify video?> -i[--image] <image path>")
@@ -18,7 +24,7 @@ video = ''
 image = ''
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 's:t:p:x:f:l:v:g:i:h', ['subreddit=', 'title=', 'post=', 'postTime=', 'flair=', 'spoiler=', 'video=', 'videogif=', 'image=', 'help'])
+    opts, args = getopt.getopt(sys.argv[1:], 's:t:p:x:f:lv:gi:h', ['subreddit=', 'title=', 'post=', 'postTime=', 'flair=', 'spoiler', 'video=', 'videogif', 'image=', 'help'])
 except getopt.GetoptError:
     print('Getopts error')
     usage()
@@ -38,11 +44,11 @@ for opt, arg in opts:
     elif opt in ('-f', '--flair'):
         flair = arg
     elif opt in ('-l', '--spoiler'):
-        spoiler = bool(arg)
+        spoiler = True
     elif opt in ('-v', '--video'):
         video = arg
     elif opt in ('-g', '--videogif'):
-        gif = bool(arg)
+        gif = True
     elif opt in ('-i', '--image'):
         image = arg
     else:
@@ -81,12 +87,9 @@ reddit = praw.Reddit(
 reddit.validate_on_submit = True
 sub = reddit.subreddit(subname)
 
-now = time.localtime()
-current_time = time.strftime("%H:%M", now)
+print(colored(pyfiglet.figlet_format("AUTOPOST", font = "slant"), 'blue'))
 
-print(pyfiglet.figlet_format("AUTOPOST", font = "slant"))
-print('local time: ' + current_time)
-print('Getting info for sub...')
+print('|', colored('getting info for sub...', 'green'))
 
 if sub is None or sub.display_name == '':
     raise ("subreddit " + subname + " not found.")
@@ -94,11 +97,27 @@ if sub is None or sub.display_name == '':
 if sub.post_requirements()['is_flair_required'] and flair == '':
     raise 'flair required for this subreddit.'
 
-print('subreddit: ' + sub.display_name)
-print('sub description sample: ' + sub.description.split("\n")[0])
+now = time.localtime()
+current_time = time.strftime("%H:%M", now)
+
+print('| + ', colored('subreddit: ', 'yellow') + colored(sub.display_name, 'cyan'))
+print('| + ', colored('description: ', 'yellow') + colored(sub.description.split("\n")[0], 'cyan'))
+print()
+print('|', colored('getting post info...', 'green'))
+print('| + ', colored('local time: ', 'yellow') + colored(current_time, 'cyan'))
+print('| + ', colored('post title: ', 'yellow') + colored(title, 'cyan'))
+print('| + ', colored('post type: ', 'yellow') + colored(post_type, 'cyan'))
+print('| + ', colored('image path: ', 'yellow') + colored(image, 'cyan'))
+print('| + ', colored('video path: ', 'yellow') + colored(video, 'cyan'))
+print('| + ', colored('flair: ', 'yellow') + colored(flair, 'cyan'))
+print('| + ', colored('videogif: ', 'yellow') + colored(gif, 'cyan'))
+print()
+print('| ============================================================== |')
 
 posted = False
 while not posted:
+    now = time.localtime()
+    current_time = time.strftime("%H:%M", now)
     if current_time == post_time:
         match post_type:
             case 'text':
@@ -123,7 +142,7 @@ while not posted:
                     template_id = next(x for x in choices if x["flair_text"] == flair)["flair_template_id"]
                     sub.submit_image(title, image_path=image, flair_id=template_id, spoiler=spoiler)
         posted = True
-        print('Posted!')
+        print(colored('>>> Posted! <<<', 'green'))
     else:
-        print('Not yet ' + post_time + '. Waiting another 60 seconds...')
+        print('|', colored('not yet', 'yellow'), colored(post_time, 'cyan'), colored('(currently', 'yellow'), colored(current_time, 'cyan') + colored('). Waiting another 60 seconds...', 'yellow'), '|')
         time.sleep(60)
